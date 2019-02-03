@@ -1,0 +1,54 @@
+[
+  {
+    "initializerFunctionParameterList" : [
+      {
+        "value" : "",
+        "name" : "a",
+        "type" : "Int",
+        "required" : true
+      },
+      {
+        "value" : "",
+        "name" : "b",
+        "type" : "String",
+        "required" : true
+      },
+      {
+        "value" : "",
+        "name" : "c",
+        "type" : "String",
+        "required" : false
+      },
+      {
+        "value" : "",
+        "name" : "d",
+        "type" : "Float",
+        "required" : true
+      }
+    ],
+    "viewControllerClassName" : "ExampleFirstViewController"
+  },
+  {
+    "initializerFunctionParameterList" : [
+      {
+        "value" : "",
+        "name" : "a",
+        "type" : "Int",
+        "required" : true
+      },
+      {
+        "value" : "",
+        "name" : "c",
+        "type" : "String",
+        "required" : false
+      },
+      {
+        "value" : "",
+        "name" : "g",
+        "type" : "Int",
+        "required" : false
+      }
+    ],
+    "viewControllerClassName" : "ExampleSecondViewController"
+  }
+]

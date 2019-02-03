@@ -1,0 +1,7 @@
+#import "./deviceFragment.gql"
+
+mutation deviceShutdown ($udid: String!) {
+  deviceShutdown (udid: $udid) {
+    ...device
+  }
+}

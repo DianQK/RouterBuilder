@@ -1,0 +1,3 @@
+mutation openUrl ($udid: String!, $url: String!) {
+  openUrl (udid: $udid, url: $url)
+}

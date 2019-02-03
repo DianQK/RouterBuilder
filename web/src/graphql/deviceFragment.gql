@@ -1,0 +1,5 @@
+fragment device on Device {
+  name
+  udid
+  state
+}

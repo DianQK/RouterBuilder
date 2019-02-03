@@ -1,0 +1,1 @@
+swift package generate-xcodeproj --xcconfig-overrides ./main.xcconfig

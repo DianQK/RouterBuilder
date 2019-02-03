@@ -1,0 +1,7 @@
+#import "./deviceFragment.gql"
+
+mutation deviceBoot ($udid: String!) {
+  deviceBoot (udid: $udid) {
+    ...device
+  }
+}

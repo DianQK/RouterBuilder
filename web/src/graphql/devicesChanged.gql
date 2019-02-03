@@ -1,0 +1,7 @@
+#import "./deviceFragment.gql"
+
+subscription devicesChanged {
+  devicesChanged {
+    ...device
+  }
+}

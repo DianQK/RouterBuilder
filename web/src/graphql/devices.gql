@@ -1,0 +1,7 @@
+#import "./deviceFragment.gql"
+
+query devices {
+  devices {
+    ...device
+  }
+}

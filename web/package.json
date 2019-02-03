@@ -1,0 +1,39 @@
+{
+  "name": "happy-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build --modern",
+    "lint": "vue-cli-service lint",
+    "apollo": "vue-cli-service apollo:watch",
+    "apollo:run": "vue-cli-service apollo:run"
+  },
+  "dependencies": {
+    "@vue/ui": "^0.5.6",
+    "graphql-type-json": "^0.2.1",
+    "lowdb": "^1.0.0",
+    "mkdirp": "^0.5.1",
+    "shortid": "^2.2.8",
+    "vue": "^2.5.22",
+    "vue-apollo": "^3.0.0-beta.11"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.4.0",
+    "@vue/cli-plugin-eslint": "^3.4.0",
+    "@vue/cli-service": "^3.4.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.13.0",
+    "eslint-plugin-graphql": "^3.0.3",
+    "eslint-plugin-vue": "^5.0.0",
+    "globby": "^9.0.0",
+    "graphql-tag": "^2.9.0",
+    "node-simctl": "^4.0.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
+    "vue-cli-plugin-apollo": "^0.19.1",
+    "vue-template-compiler": "^2.5.21",
+    "xterm": "^3.11.0"
+  }
+}
