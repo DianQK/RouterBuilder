@@ -19,6 +19,7 @@
     "vue-apollo": "^3.0.0-beta.11"
   },
   "devDependencies": {
+    "@vue/cli": "^3.4.0",
     "@vue/cli-plugin-babel": "^3.4.0",
     "@vue/cli-plugin-eslint": "^3.4.0",
     "@vue/cli-service": "^3.4.0",
