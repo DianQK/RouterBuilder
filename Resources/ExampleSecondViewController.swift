@@ -6,7 +6,7 @@ class ExampleSecondViewController: UIViewController {
     let c: String?
     let g: Int?
 
-    init(a: Int, c: String?, g: Int?) {
+    required init(a: Int, c: String?, g: Int?) {
         self.a = a
         self.c = c
         self.g = g

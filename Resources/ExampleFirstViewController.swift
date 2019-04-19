@@ -7,7 +7,7 @@ class ExampleFirstViewController: UIViewController {
     let c: String?
     let d: Float
 
-    init(a: Int, b: String, c: String?, d: Float) {
+    required init(a: Int, b: String, c: String?, d: Float) {
         self.a = a
         self.b = b
         self.c = c
