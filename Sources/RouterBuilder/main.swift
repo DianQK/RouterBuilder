@@ -19,10 +19,11 @@ class TokenVisitor : SyntaxVisitor {
         }
         current = node
     }
-
-    override func visit(_ token: TokenSyntax) {
+    
+    override func visit(_ token: TokenSyntax) -> SyntaxVisitorContinueKind {
         current.text = token.text
         processToken(token)
+        return .visitChildren
     }
 
     override func visitPost(_ node: Syntax) {
@@ -86,12 +87,13 @@ struct RouteInfo: Encodable {
 
 func getViewControllerRouteInfo(filePath: URL) -> RouteInfo {
     let sourceFile = try! SyntaxTreeParser.parse(filePath)
+    
     let visitor = TokenVisitor()
-    visitor.visit(sourceFile)
+    sourceFile.walk(visitor)
 
     let tree = visitor.tree
 
-    let codeBlockItemList = tree.first(where: { $0.text == "CodeBlockItemList" })!
+    let codeBlockItemList = tree.first!.children.first(where: { $0.text == "CodeBlockItemList" })!
     let controllerClassDecl = codeBlockItemList.children.flatMap({ $0.children })
         .first(where: { $0.text == "ClassDecl" && $0.children.contains(where: { $0.text.contains("ViewController") }) })!
 
@@ -99,8 +101,9 @@ func getViewControllerRouteInfo(filePath: URL) -> RouteInfo {
 
     let initializerDecl = controllerClassDecl
         .children.first(where: { $0.text == "MemberDeclBlock" })!
-        .children.first(where: { $0.text == "DeclList" })!
-        .children.first(where: { $0.text == "InitializerDecl" })!
+        .children.first(where: { $0.text == "MemberDeclList" })!
+        .children.flatMap({ $0.children }) // List 类型解包出 Item 的内容
+        .first(where: { $0.text == "InitializerDecl" })!
 
     let initializerFunctionParameterList = initializerDecl
         .children.first(where: { $0.text == "ParameterClause" })!
@@ -167,7 +170,7 @@ let routesContentDictionaryElementList: [DictionaryElementSyntax] = viewControll
                 inTok: SyntaxFactory.makeInKeyword(trailingTrivia: .newlines(1))
             ),
             statements: SyntaxFactory.makeCodeBlockItemList([
-                SyntaxFactory.makeCodeBlockItem(item: SyntaxFactory.makeIdentifier(result, leadingTrivia: .spaces(8)), semicolon: SyntaxFactory.makeIdentifier("", leadingTrivia: [.newlines(1), .spaces(4)]))
+                SyntaxFactory.makeCodeBlockItem(item: SyntaxFactory.makeIdentifier(result, leadingTrivia: .spaces(8)), semicolon: SyntaxFactory.makeIdentifier("", leadingTrivia: [.newlines(1), .spaces(4)]), errorTokens: nil)
                 ]),
             rightBrace: SyntaxFactory.makeRightBraceToken())
         )
@@ -175,35 +178,42 @@ let routesContentDictionaryElementList: [DictionaryElementSyntax] = viewControll
     }
 }
 
-var declListSyntax = SyntaxFactory.makeBlankDeclList()
-declListSyntax = declListSyntax.appending(ImportDeclSyntax { (builder) in
-    builder.useImportTok(SyntaxFactory.makeImportKeyword(trailingTrivia: .spaces(1)))
-    builder.useImportKind(SyntaxFactory.makeIdentifier("UIKit", trailingTrivia: .newlines(2)))
-})
-let variableDeclSyntax = VariableDeclSyntax { (builder) in
-    builder.useLetOrVarKeyword(SyntaxFactory.makeLetKeyword(trailingTrivia: .spaces(1)))
-    builder.addPatternBinding(SyntaxFactory.makePatternBinding(
-        pattern: IdentifierPatternSyntax({ (builder) in
-            builder.useIdentifier(SyntaxFactory.makeIdentifier("routes"))
-        }),
-        typeAnnotation: SyntaxFactory.makeTypeAnnotation(
-            colon: SyntaxFactory.makeColonToken(trailingTrivia: .spaces(1)),
-            type: SyntaxFactory.makeTypeIdentifier("[String: ([URLQueryItem]) -> UIViewController]", trailingTrivia: .spaces(1))
-        ),
-        initializer: InitializerClauseSyntax({ (builder) in
-            builder.useEqual(SyntaxFactory.makeEqualToken(trailingTrivia: .spaces(1)))
-            builder.useValue(SyntaxFactory.makeDictionaryExpr(
-                leftSquare: SyntaxFactory.makeLeftSquareBracketToken(trailingTrivia: .newlines(1)),
-                content: SyntaxFactory.makeDictionaryElementList(routesContentDictionaryElementList),
-                rightSquare: SyntaxFactory.makeRightSquareBracketToken(trailingTrivia: .newlines(1))
-            ))
-        }),
-        accessor: nil,
-        trailingComma: nil
+var routesSourceFile = SyntaxFactory.makeBlankSourceFile()
+routesSourceFile = routesSourceFile.addCodeBlockItem(CodeBlockItemSyntax({ (builder) in
+    builder.useItem(ImportDeclSyntax { (builder) in
+        builder.useImportTok(SyntaxFactory.makeImportKeyword(trailingTrivia: .spaces(1)))
+        builder.useImportKind(SyntaxFactory.makeIdentifier("UIKit", trailingTrivia: .newlines(2)))
+    })
+}))
+
+routesSourceFile = routesSourceFile.addCodeBlockItem(CodeBlockItemSyntax({ (builder) in
+    let variableDeclSyntax = VariableDeclSyntax { (builder) in
+        builder.useLetOrVarKeyword(SyntaxFactory.makeLetKeyword(trailingTrivia: .spaces(1)))
+        builder.addPatternBinding(SyntaxFactory.makePatternBinding(
+            pattern: IdentifierPatternSyntax({ (builder) in
+                builder.useIdentifier(SyntaxFactory.makeIdentifier("routes"))
+            }),
+            typeAnnotation: SyntaxFactory.makeTypeAnnotation(
+                colon: SyntaxFactory.makeColonToken(trailingTrivia: .spaces(1)),
+                type: SyntaxFactory.makeTypeIdentifier("[String: ([URLQueryItem]) -> UIViewController]", trailingTrivia: .spaces(1))
+            ),
+            initializer: InitializerClauseSyntax({ (builder) in
+                builder.useEqual(SyntaxFactory.makeEqualToken(trailingTrivia: .spaces(1)))
+                builder.useValue(SyntaxFactory.makeDictionaryExpr(
+                    leftSquare: SyntaxFactory.makeLeftSquareBracketToken(trailingTrivia: .newlines(1)),
+                    content: SyntaxFactory.makeDictionaryElementList(routesContentDictionaryElementList),
+                    rightSquare: SyntaxFactory.makeRightSquareBracketToken(trailingTrivia: .newlines(1))
+                ))
+            }),
+            accessor: nil,
+            trailingComma: nil
+            )
         )
-    )
-}
-declListSyntax = declListSyntax.appending(variableDeclSyntax)
-print(declListSyntax)
+    }
+    builder.useItem(variableDeclSyntax)
+}))
+
+
+print(routesSourceFile)
 let routesSwiftOutputPath = URL(fileURLWithPath: arguments[2]) // $SRCROOT/routerbuilderapp/routerbuilder/routes.swift
-try! declListSyntax.description.write(to: routesSwiftOutputPath, atomically: true, encoding: .utf8)
+try! routesSourceFile.description.write(to: routesSwiftOutputPath, atomically: true, encoding: .utf8)
