@@ -1,0 +1,46 @@
+% warning = "This file was automatically generated and should not be edited."
+// ${warning}
+
+import UIKit
+
+let routes: [String: ([URLQueryItem]) -> UIViewController] = [
+%{
+  import json
+}%
+% with open('../../web/src/appRoutes.json') as file:
+    % data = file.read()
+    % routes = json.loads(data)
+    % for route in routes:
+%{
+viewControllerClassName = route["viewControllerClassName"]
+initializerFunctionParameterList = route["initializerFunctionParameterList"]
+}%
+    "${viewControllerClassName}": { queryItems in
+        return ${viewControllerClassName}(
+          % for index, param in enumerate(initializerFunctionParameterList):
+%{
+  value = param["value"]
+  name = param["name"]
+  type = param["type"]
+  required = param["required"]
+  comma = "" if index + 1 == len(initializerFunctionParameterList) else ","
+}%
+            % if required:
+          % if type == "String":
+            ${name}: queryItems.first(where: { $0.name == "${name}" })!.value!${comma}
+          % else:
+            ${name}: ${type}(queryItems.first(where: { $0.name == "${name}" })!.value!)!${comma}
+          %end
+            % else:
+          % if type == "String":
+            ${name}: queryItems.first(where: { $0.name == "${name}" })?.value${comma}
+          % else:
+            ${name}: queryItems.first(where: { $0.name == "${name}" })?.value.flatMap(${type}.init)${comma}
+          %end
+            %end
+          %end
+        )
+    },
+    %end
+%end
+]

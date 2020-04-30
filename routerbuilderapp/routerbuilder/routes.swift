@@ -1,3 +1,5 @@
+// This file was automatically generated and should not be edited.
+
 import UIKit
 
 let routes: [String: ([URLQueryItem]) -> UIViewController] = [

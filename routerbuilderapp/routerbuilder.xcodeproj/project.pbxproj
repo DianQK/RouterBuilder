@@ -89,9 +89,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 913B303122112A4C00FFFAAD /* Build configuration list for PBXNativeTarget "routerbuilder" */;
 			buildPhases = (
+				268740CB245A8905008DCFC3 /* [GYB] Build Routes */,
 				913B301B22112A4B00FFFAAD /* Sources */,
 				913B301C22112A4B00FFFAAD /* Frameworks */,
 				913B301D22112A4B00FFFAAD /* Resources */,
+				268740CC245A8D2E008DCFC3 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -148,6 +150,44 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		268740CB245A8905008DCFC3 /* [GYB] Build Routes */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[GYB] Build Routes";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$SRCROOT/../.build/release/RouterBuilder $SRCROOT/../Resources $SRCROOT/../web/src/appRoutes.json\n$SRCROOT/gyb.py --line-directive '' -o $SRCROOT/routerbuilder/routes.swift $SRCROOT/routerbuilder/routes.swift.gyb\n";
+		};
+		268740CC245A8D2E008DCFC3 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		913B301B22112A4B00FFFAAD /* Sources */ = {
